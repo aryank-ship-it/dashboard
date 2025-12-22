@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 150 10% 98%;
+    --foreground: 150 30% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 150 30% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 30% 10%;
+
+    --primary: 150 68% 19%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 150 15% 95%;
+    --secondary-foreground: 150 30% 20%;
+
+    --muted: 150 10% 94%;
+    --muted-foreground: 150 10% 45%;
+
+    --accent: 150 40% 92%;
+    --accent-foreground: 150 68% 19%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 150 60% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 210 80% 55%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 150 15% 90%;
+    --input: 150 15% 90%;
+    --ring: 150 68% 19%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 150 30% 10%;
+    --sidebar-foreground: 150 10% 85%;
+    --sidebar-primary: 150 68% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 25% 18%;
+    --sidebar-accent-foreground: 150 10% 95%;
+    --sidebar-border: 150 20% 20%;
+    --sidebar-ring: 150 68% 50%;
+    --sidebar-muted: 150 15% 40%;
+
+    /* Custom shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(150 10% 10% / 0.03);
+    --shadow-md: 0 4px 6px -1px hsl(150 10% 10% / 0.05), 0 2px 4px -2px hsl(150 10% 10% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(150 10% 10% / 0.08), 0 4px 6px -4px hsl(150 10% 10% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(150 10% 10% / 0.1), 0 8px 10px -6px hsl(150 10% 10% / 0.08);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(150 68% 19%) 0%, hsl(150 60% 28%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(150 10% 99%) 100%);
+  }
+
+  .dark {
+    --background: 150 30% 6%;
+    --foreground: 150 10% 95%;
+
+    --card: 150 25% 10%;
+    --card-foreground: 150 10% 95%;
+
+    --popover: 150 25% 10%;
+    --popover-foreground: 150 10% 95%;
+
+    --primary: 150 60% 45%;
+    --primary-foreground: 150 30% 5%;
+
+    --secondary: 150 20% 15%;
+    --secondary-foreground: 150 10% 90%;
+
+    --muted: 150 15% 15%;
+    --muted-foreground: 150 10% 60%;
+
+    --accent: 150 25% 18%;
+    --accent-foreground: 150 60% 55%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 150 55% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 90% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 210 75% 60%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 150 15% 18%;
+    --input: 150 15% 18%;
+    --ring: 150 60% 45%;
+
+    --sidebar-background: 150 35% 5%;
+    --sidebar-foreground: 150 10% 85%;
+    --sidebar-primary: 150 60% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 25% 12%;
+    --sidebar-accent-foreground: 150 10% 95%;
+    --sidebar-border: 150 20% 15%;
+    --sidebar-ring: 150 60% 50%;
+    --sidebar-muted: 150 10% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-200;
+  }
+
+  .sidebar-link-active {
+    @apply bg-sidebar-accent text-sidebar-foreground font-medium;
+  }
+
+  .stat-card {
+    @apply bg-card rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-shadow duration-300;
+  }
+
+  .dashboard-card {
+    @apply bg-card rounded-2xl shadow-card overflow-hidden;
+  }
+}
