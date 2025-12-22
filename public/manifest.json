@@ -1,10 +1,12 @@
 {
   "name": "Your App Name",
-  "short_name": "AppName",
+  "short_name": "App",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone"],
   "background_color": "#ffffff",
-  "theme_color": "#0f172a",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
