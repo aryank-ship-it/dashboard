@@ -30,8 +30,8 @@ const Topbar = () => {
     }
   };
 
-  const userInitials = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name
+  const userInitials = user?.fullName
+    ? user.fullName
       .split(' ')
       .map((n: string) => n[0])
       .join('')
@@ -39,7 +39,7 @@ const Topbar = () => {
       .substring(0, 2)
     : 'U';
 
-  const userName = user?.user_metadata?.full_name || 'User';
+  const userName = user?.fullName || 'User';
   const userEmail = user?.email || '';
 
   return (
