@@ -1,57 +1,71 @@
-import { useTasks } from './useTasks';
-import { useEvents } from './useEvents';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
+import { taskAPI, eventAPI, teamAPI } from '@/lib/api';
 
 export const useDashboardStats = () => {
-  const { tasks, isLoading: tasksLoading } = useTasks();
-  const { events, isLoading: eventsLoading } = useEvents();
+  const { user } = useAuth();
 
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((t) => t.status === 'done').length;
-  const inProgressTasks = tasks.filter((t) => t.status === 'in-progress').length;
-  const todoTasks = tasks.filter((t) => t.status === 'todo').length;
+  return useQuery({
+    queryKey: ['dashboard-stats', user?._id],
+    queryFn: async () => {
+      const [tasks, events, teamMembers] = await Promise.all([
+        taskAPI.getTasks(),
+        eventAPI.getEvents(),
+        teamAPI.getTeamMembers(),
+      ]);
 
-  const upcomingEvents = events.filter((e) => new Date(e.date) >= new Date()).length;
+      const completedTasks = tasks.filter((t: any) => t.status === 'done').length;
+      const inProgressTasks = tasks.filter((t: any) => t.status === 'in-progress').length;
+      const todoTasks = tasks.filter((t: any) => t.status === 'todo').length;
+      const upcomingEvents = events.filter((e: any) => new Date(e.date) >= new Date()).length;
 
-  // Calculate weekly data for charts
-  const getWeeklyData = () => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const today = new Date();
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
+      // Weekly data for charts
+      const getWeeklyData = () => {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = new Date();
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
 
-    return days.map((day, index) => {
-      const dayDate = new Date(weekStart);
-      dayDate.setDate(weekStart.getDate() + index);
-      const dateStr = dayDate.toISOString().split('T')[0];
+        return days.map((day, index) => {
+          const dayDate = new Date(weekStart);
+          dayDate.setDate(weekStart.getDate() + index);
+          const dateStr = dayDate.toISOString().split('T')[0];
 
-      const dayTasks = tasks.filter((t) => {
-        const taskDate = t.createdAt.split('T')[0];
-        return taskDate === dateStr;
-      }).length;
+          const dayTasksCount = tasks.filter((t: any) => {
+            const taskDate = (t.createdAt || t.created_at || '').split('T')[0];
+            return taskDate === dateStr;
+          }).length;
 
-      const dayEvents = events.filter((e) => e.date === dateStr).length;
+          const dayEventsCount = events.filter((e: any) => {
+            const eventDate = (e.date || '').split('T')[0];
+            return eventDate === dateStr;
+          }).length;
 
-      return { day, tasks: dayTasks, events: dayEvents };
-    });
-  };
+          return {
+            name: day,
+            tasks: dayTasksCount,
+            events: dayEventsCount,
+          };
+        });
+      };
 
-  // Calculate progress data for donut chart
-  const getProgressData = () => [
-    { name: 'Completed', value: completedTasks, color: 'hsl(150, 60%, 40%)' },
-    { name: 'In Progress', value: inProgressTasks, color: 'hsl(38, 92%, 50%)' },
-    { name: 'To Do', value: todoTasks, color: 'hsl(150, 10%, 70%)' },
-  ];
+      const progressData = [
+        { name: 'Completed', value: completedTasks, color: '#10B981' },
+        { name: 'In Progress', value: inProgressTasks, color: '#3B82F6' },
+        { name: 'Todo', value: todoTasks, color: '#F59E0B' },
+      ];
 
-  return {
-    stats: {
-      totalTasks,
-      completedTasks,
-      inProgressTasks,
-      todoTasks,
-      upcomingEvents,
+      return {
+        totalTasks: tasks.length,
+        completedTasks,
+        inProgressTasks,
+        todoTasks,
+        upcomingEvents,
+        teamCount: teamMembers.length,
+        weeklyData: getWeeklyData(),
+        progressData,
+      };
     },
-    weeklyData: getWeeklyData(),
-    progressData: getProgressData(),
-    isLoading: tasksLoading || eventsLoading,
-  };
+    enabled: !!user,
+  });
 };

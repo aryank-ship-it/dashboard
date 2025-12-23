@@ -11,12 +11,12 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useProfile } from '@/hooks/useProfile';
 
 const Dashboard = () => {
-  const { stats, weeklyData, progressData, isLoading } = useDashboardStats();
+  const { data: stats, isLoading } = useDashboardStats();
   const { profile } = useProfile();
 
   const displayName = profile?.fullName?.split(' ')[0] || 'there';
 
-  if (isLoading) {
+  if (isLoading || !stats) {
     return (
       <DashboardLayout>
         <div className="flex h-[50vh] items-center justify-center">
@@ -75,8 +75,8 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left Column - Analytics & Reminders */}
           <div className="space-y-6 lg:col-span-2">
-            <WeeklyBarChart data={weeklyData} />
-            
+            <WeeklyBarChart data={stats.weeklyData} />
+
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <ReminderCard />
               <TimeTracker />
@@ -85,8 +85,8 @@ const Dashboard = () => {
 
           {/* Right Column - Progress & Team */}
           <div className="space-y-6">
-            <ProgressDonut data={progressData} />
-            <TeamCollaboration members={teamMembers} />
+            <ProgressDonut data={stats.progressData} />
+            <TeamCollaboration members={[]} />
           </div>
         </div>
       </div>

@@ -1,29 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Database } from '@/integrations/supabase/types';
-
-type EventRow = Database['public']['Tables']['events']['Row'];
-type EventInsert = Database['public']['Tables']['events']['Insert'];
+import { eventAPI } from '@/lib/api';
 
 export interface CalendarEvent {
-  id: string;
+  _id: string;
   title: string;
   date: string;
   color: string;
-  description: string | null;
+  description?: string;
   createdAt: string;
+  updatedAt: string;
 }
-
-const mapEventFromDb = (event: EventRow): CalendarEvent => ({
-  id: event.id,
-  title: event.title,
-  date: event.date,
-  color: event.color,
-  description: event.description,
-  createdAt: event.created_at,
-});
 
 export const useEvents = () => {
   const { user } = useAuth();
@@ -31,63 +19,56 @@ export const useEvents = () => {
   const queryClient = useQueryClient();
 
   const { data: events = [], isLoading, error } = useQuery({
-    queryKey: ['events', user?.id],
+    queryKey: ['events', user?._id],
     queryFn: async () => {
-      if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: true });
-
-      if (error) throw error;
-      return (data || []).map(mapEventFromDb);
+      return await eventAPI.getEvents();
     },
     enabled: !!user,
   });
 
-  const addEvent = useMutation({
-    mutationFn: async (newEvent: Omit<EventInsert, 'user_id'>) => {
-      if (!user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('events')
-        .insert({
-          ...newEvent,
-          user_id: user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return mapEventFromDb(data);
+  const createEvent = useMutation({
+    mutationFn: async (newEvent: Omit<CalendarEvent, '_id' | 'createdAt' | 'updatedAt'>) => {
+      return await eventAPI.createEvent(newEvent);
     },
-    onSuccess: (event) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       toast({
         title: 'Event Created',
-        description: `"${event.title}" has been scheduled for ${event.date}.`,
+        description: 'New event has been added successfully.',
       });
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.response?.data?.error?.message || 'Failed to create event',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateEvent = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<CalendarEvent> }) => {
+      return await eventAPI.updateEvent(id, updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast({
+        title: 'Event Updated',
+        description: 'Event has been updated successfully.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.error?.message || 'Failed to update event',
         variant: 'destructive',
       });
     },
   });
 
   const deleteEvent = useMutation({
-    mutationFn: async (eventId: string) => {
-      const { error } = await supabase
-        .from('events')
-        .delete()
-        .eq('id', eventId);
-
-      if (error) throw error;
-      return eventId;
+    mutationFn: async (id: string) => {
+      return await eventAPI.deleteEvent(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
@@ -96,10 +77,10 @@ export const useEvents = () => {
         description: 'Event has been removed.',
       });
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.response?.data?.error?.message || 'Failed to delete event',
         variant: 'destructive',
       });
     },
@@ -109,7 +90,8 @@ export const useEvents = () => {
     events,
     isLoading,
     error,
-    addEvent,
+    createEvent,
+    updateEvent,
     deleteEvent,
   };
 };

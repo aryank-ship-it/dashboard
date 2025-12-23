@@ -1,7 +1,11 @@
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 import { weeklyData } from '@/lib/data';
 
-const WeeklyBarChart = () => {
+interface WeeklyBarChartProps {
+  data: any[];
+}
+
+const WeeklyBarChart = ({ data }: WeeklyBarChartProps) => {
   const today = new Date().getDay();
 
   return (
@@ -10,24 +14,24 @@ const WeeklyBarChart = () => {
         <h3 className="text-lg font-semibold text-foreground">Project Analytics</h3>
         <p className="text-sm text-muted-foreground">Weekly task completion</p>
       </div>
-      
+
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={weeklyData} barCategoryGap="20%">
-            <XAxis 
-              dataKey="day" 
+          <BarChart data={data} barCategoryGap="20%">
+            <XAxis
+              dataKey="name"
               axisLine={false}
               tickLine={false}
               tick={{ fill: 'hsl(150, 10%, 45%)', fontSize: 12 }}
             />
-            <YAxis 
+            <YAxis
               axisLine={false}
               tickLine={false}
               tick={{ fill: 'hsl(150, 10%, 45%)', fontSize: 12 }}
             />
             <Bar dataKey="tasks" radius={[6, 6, 0, 0]}>
-              {weeklyData.map((_, index) => (
-                <Cell 
+              {data.map((_, index) => (
+                <Cell
                   key={`cell-${index}`}
                   fill={index === today ? 'hsl(150, 68%, 19%)' : 'hsl(150, 15%, 85%)'}
                 />

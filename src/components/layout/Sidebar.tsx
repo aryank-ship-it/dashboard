@@ -23,6 +23,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
@@ -39,6 +41,17 @@ const bottomItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <ShadcnSidebar collapsible="icon">
@@ -104,6 +117,7 @@ const Sidebar = () => {
                 <SidebarMenuButton
                   tooltip="Logout"
                   className="hover:text-destructive hover:bg-destructive/10"
+                  onClick={handleSignOut}
                 >
                   <LogOut />
                   <span>Logout</span>

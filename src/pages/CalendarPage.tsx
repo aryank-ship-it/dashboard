@@ -22,18 +22,26 @@ const getEventStyle = (color: string) => {
   return colorStyles[color] || 'bg-primary/10 text-primary border-l-4 border-l-primary';
 };
 
+import { useSearch } from '@/contexts/SearchContext';
+
 const CalendarPage = () => {
-  const { events, isLoading, addEvent, deleteEvent } = useEvents();
+  const { events, isLoading, createEvent, deleteEvent } = useEvents();
+  const { searchQuery } = useSearch();
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.date.includes(searchQuery)
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
-  
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  
+
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
+
   const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   const prevMonth = () => {
@@ -46,15 +54,15 @@ const CalendarPage = () => {
 
   const getEventsForDay = (day: number) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return events.filter((event) => event.date === dateStr);
+    return filteredEvents.filter((event) => event.date === dateStr);
   };
 
   const handleAddEvent = (newEvent: { title: string; date: string; color: string; description?: string }) => {
-    addEvent.mutate({
+    createEvent.mutate({
       title: newEvent.title,
       date: newEvent.date,
       color: newEvent.color,
-      description: newEvent.description || null,
+      description: newEvent.description || undefined,
     });
   };
 
@@ -69,7 +77,7 @@ const CalendarPage = () => {
   };
 
   const today = new Date();
-  const isToday = (day: number) => 
+  const isToday = (day: number) =>
     day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 
   const days = [];
@@ -133,7 +141,7 @@ const CalendarPage = () => {
             <div className="grid grid-cols-7 gap-1">
               {days.map((day, index) => {
                 const dayEvents = day ? getEventsForDay(day) : [];
-                
+
                 return (
                   <div
                     key={index}
@@ -155,7 +163,7 @@ const CalendarPage = () => {
                         <div className="mt-1 space-y-1">
                           {dayEvents.slice(0, 2).map((event) => (
                             <div
-                              key={event.id}
+                              key={event._id}
                               className={cn(
                                 'rounded px-1.5 py-0.5 text-xs truncate',
                                 getEventStyle(event.color)
@@ -188,15 +196,15 @@ const CalendarPage = () => {
                 <Skeleton key={i} className="h-16 w-full rounded-lg" />
               ))}
             </div>
-          ) : events.length === 0 ? (
+          ) : filteredEvents.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
-              No events scheduled. Click on a day or "Add Event" to create one.
+              No events found. {searchQuery ? 'Try a different search.' : 'Click on a day or "Add Event" to create one.'}
             </p>
           ) : (
             <div className="space-y-3">
-              {events.map((event) => (
+              {filteredEvents.map((event) => (
                 <div
-                  key={event.id}
+                  key={event._id}
                   className={cn(
                     'flex items-center justify-between rounded-lg p-3',
                     getEventStyle(event.color)
@@ -211,7 +219,7 @@ const CalendarPage = () => {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 hover:text-destructive"
-                      onClick={() => handleDeleteEvent(event.id)}
+                      onClick={() => handleDeleteEvent(event._id)}
                       disabled={deleteEvent.isPending}
                     >
                       <Trash2 className="h-4 w-4" />

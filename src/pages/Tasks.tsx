@@ -36,9 +36,11 @@ const priorityStyles = {
   'low': 'bg-muted text-muted-foreground border-border',
 };
 
+import { useSearch } from '@/contexts/SearchContext';
+
 const Tasks = () => {
-  const { tasks, isLoading, addTask, deleteTask, updateTaskStatus } = useTasks();
-  const [searchQuery, setSearchQuery] = useState('');
+  const { tasks, isLoading, createTask, deleteTask, updateTask } = useTasks();
+  const { searchQuery, setSearchQuery } = useSearch();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -51,19 +53,19 @@ const Tasks = () => {
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const handleAddTask = (newTask: { 
-    title: string; 
-    description: string; 
-    status: Task['status']; 
-    priority: Task['priority']; 
-    dueDate?: string 
+  const handleAddTask = (newTask: {
+    title: string;
+    description: string;
+    status: Task['status'];
+    priority: Task['priority'];
+    dueDate?: string
   }) => {
-    addTask.mutate({
+    createTask.mutate({
       title: newTask.title,
-      description: newTask.description || null,
+      description: newTask.description || undefined,
       status: newTask.status,
       priority: newTask.priority,
-      due_date: newTask.dueDate || null,
+      dueDate: newTask.dueDate || undefined,
     });
   };
 
@@ -72,7 +74,7 @@ const Tasks = () => {
   };
 
   const handleStatusChange = (taskId: string, newStatus: Task['status']) => {
-    updateTaskStatus.mutate({ id: taskId, status: newStatus });
+    updateTask.mutate({ id: taskId, updates: { status: newStatus } });
   };
 
   const formatDate = (dateStr: string | null) => {
@@ -107,10 +109,10 @@ const Tasks = () => {
                 className="pl-10"
               />
             </div>
-            
+
             <div className="flex items-center gap-3">
               <Filter className="h-4 w-4 text-muted-foreground" />
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Status" />
@@ -122,7 +124,7 @@ const Tasks = () => {
                   <SelectItem value="done">Done</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Priority" />
@@ -169,7 +171,7 @@ const Tasks = () => {
                 </TableRow>
               ) : (
                 filteredTasks.map((task) => (
-                  <TableRow key={task.id} className="border-border hover:bg-muted/50">
+                  <TableRow key={task._id} className="border-border hover:bg-muted/50">
                     <TableCell>
                       <div>
                         <p className="font-medium text-foreground">{task.title}</p>
@@ -183,7 +185,7 @@ const Tasks = () => {
                     <TableCell>
                       <Select
                         value={task.status}
-                        onValueChange={(value) => handleStatusChange(task.id, value as Task['status'])}
+                        onValueChange={(value) => handleStatusChange(task._id, value as Task['status'])}
                       >
                         <SelectTrigger className="w-[130px] h-8 border-0 p-0">
                           <Badge variant="outline" className={cn('capitalize cursor-pointer', statusStyles[task.status])}>
@@ -208,7 +210,7 @@ const Tasks = () => {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDeleteTask(task.id)}
+                        onClick={() => handleDeleteTask(task._id)}
                         disabled={deleteTask.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
