@@ -35,7 +35,7 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
     register: async (email: string, password: string, fullName: string) => {
-        const { data } = await api.post('/auth/register', { email, password, fullName });
+        const { data } = await api.post('/api/auth/register', { email, password, fullName });
         if (data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
