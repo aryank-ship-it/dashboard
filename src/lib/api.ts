@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://dashboard-pink-three-71.vercel.app/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://dashboard-backend-1-ycf9.onrender.com';
 
 // Create axios instance
 export const api = axios.create({
