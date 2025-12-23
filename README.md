@@ -42,7 +42,7 @@ MONGODB_URI=mongodb://localhost:27017/dashboard
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 PORT=5000
 CLIENT_URL=http://localhost:5173
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=https://dashboard-pink-three-71.vercel.app/api
 ```
 
 **⚠️ IMPORTANT**: Change `JWT_SECRET` before deploying to production!
@@ -224,17 +224,17 @@ Now you can add team members! 🎉
 
 ```bash
 # Register
-curl -X POST http://localhost:5000/api/auth/register \
+curl -X POST https://dashboard-pink-three-71.vercel.app/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123","fullName":"Test User"}'
 
 # Login
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST https://dashboard-pink-three-71.vercel.app/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 
 # Get team members (replace TOKEN)
-curl http://localhost:5000/api/team-members \
+curl https://dashboard-pink-three-71.vercel.app/api/team-members \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
@@ -261,7 +261,7 @@ npm run lint         # Run ESLint
 | `PORT` | Backend server port | `5000` |
 | `NODE_ENV` | Environment | `development` |
 | `CLIENT_URL` | Frontend URL (for CORS) | `http://localhost:5173` |
-| `VITE_API_URL` | API URL for frontend | `http://localhost:5000/api` |
+| `VITE_API_URL` | API URL for frontend | `https://dashboard-pink-three-71.vercel.app/api` |
 
 ---
 

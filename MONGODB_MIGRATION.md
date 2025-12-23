@@ -101,7 +101,7 @@ NODE_ENV=development
 
 # Client
 CLIENT_URL=http://localhost:5173
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=https://dashboard-pink-three-71.vercel.app/api
 ```
 
 ### **3. Start the Application**
@@ -266,12 +266,12 @@ db.users.updateOne(
 ### **1. Test Authentication**
 ```bash
 # Register
-curl -X POST http://localhost:5000/api/auth/register \
+curl -X POST https://dashboard-pink-three-71.vercel.app/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123","fullName":"Test User"}'
 
 # Login
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST https://dashboard-pink-three-71.vercel.app/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 ```
@@ -279,11 +279,11 @@ curl -X POST http://localhost:5000/api/auth/login \
 ### **2. Test Team Members (with token)**
 ```bash
 # Get team members
-curl http://localhost:5000/api/team-members \
+curl https://dashboard-pink-three-71.vercel.app/api/team-members \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 
 # Search users
-curl "http://localhost:5000/api/users/search?q=test" \
+curl "https://dashboard-pink-three-71.vercel.app/api/users/search?q=test" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
