@@ -36,7 +36,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/api/tasks"
+                path="/tasks"
                 element={
                   <ProtectedRoute>
                     <Tasks />
@@ -44,7 +44,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/api/calendar"
+                path="/calendar"
                 element={
                   <ProtectedRoute>
                     <CalendarPage />
@@ -52,7 +52,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/api/analytics"
+                path="/analytics"
                 element={
                   <ProtectedRoute>
                     <Analytics />
@@ -60,7 +60,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/api/team"
+                path="/team"
                 element={
                   <ProtectedRoute>
                     <Team />
@@ -68,7 +68,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/api/settings"
+                path="/settings"
                 element={
                   <ProtectedRoute>
                     <Settings />

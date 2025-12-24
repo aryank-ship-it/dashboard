@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://dashboard-backend-1-ycf9.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://dashboard-backend-1-ycf9.onrender.com/api';
 
 // Create axios instance
 export const api = axios.create({
@@ -103,7 +103,7 @@ export const teamAPI = {
 // Task API
 export const taskAPI = {
     getTasks: async () => {
-        const { data } = await api.get('/api/tasks');
+        const { data } = await api.get('/tasks');
         return data;
     },
 
@@ -114,17 +114,17 @@ export const taskAPI = {
         priority?: string;
         dueDate?: string;
     }) => {
-        const { data } = await api.post('/api/tasks', task);
+        const { data } = await api.post('/tasks', task);
         return data;
     },
 
     updateTask: async (id: string, updates: any) => {
-        const { data } = await api.put(`/api/tasks/${id}`, updates);
+        const { data } = await api.put(`/tasks/${id}`, updates);
         return data;
     },
 
     deleteTask: async (id: string) => {
-        const { data } = await api.delete(`/api/tasks/${id}`);
+        const { data } = await api.delete(`/tasks/${id}`);
         return data;
     },
 };
