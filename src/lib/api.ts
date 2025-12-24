@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-// 🔴 IMPORTANT: base URL MUST include /api
 const API_URL =
     import.meta.env.VITE_API_URL ||
-    'https://dashboard-backend-2-pobu.onrender.com/api';
+    'https://dashboard-backend-1-ycf9.onrender.com';
+
+// remove this url on production
 
 export const api = axios.create({
     baseURL: API_URL,
@@ -13,7 +14,7 @@ export const api = axios.create({
     withCredentials: true,
 });
 
-// Attach JWT token
+// Attach auth token
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('auth_token');
     if (token) {
@@ -22,7 +23,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Handle auth expiry
+// Handle 401
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -35,10 +36,10 @@ api.interceptors.response.use(
     }
 );
 
-// ================= AUTH =================
+// ================= AUTH (already correct) =================
 export const authAPI = {
     register: async (email: string, password: string, fullName: string) => {
-        const { data } = await api.post('/auth/register', {
+        const { data } = await api.post('/api/auth/register', {
             email,
             password,
             fullName,
@@ -51,7 +52,7 @@ export const authAPI = {
     },
 
     login: async (email: string, password: string) => {
-        const { data } = await api.post('/auth/login', { email, password });
+        const { data } = await api.post('/api/auth/login', { email, password });
         if (data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -73,7 +74,7 @@ export const authAPI = {
 // ================= USERS =================
 export const userAPI = {
     getProfile: async () => {
-        const { data } = await api.get('/users/me');
+        const { data } = await api.get('/api/users/me');
         return data;
     },
 
@@ -81,13 +82,13 @@ export const userAPI = {
         fullName?: string;
         avatarUrl?: string;
     }) => {
-        const { data } = await api.put('/users/me', updates);
+        const { data } = await api.put('/api/users/me', updates);
         localStorage.setItem('user', JSON.stringify(data));
         return data;
     },
 
     searchUsers: async (query: string) => {
-        const { data } = await api.get('/users/search', {
+        const { data } = await api.get('/api/users/search', {
             params: { q: query },
         });
         return data;
@@ -97,19 +98,21 @@ export const userAPI = {
 // ================= TEAM =================
 export const teamAPI = {
     getTeamMembers: async () => {
-        const { data } = await api.get('/team-members');
+        const { data } = await api.get('/api/team-members');
         return data;
     },
 
     addTeamMember: async (userId: string) => {
-        const { data } = await api.post('/team-members', {
+        const { data } = await api.post('/api/team-members', {
             user_id: userId,
         });
         return data;
     },
 
     removeTeamMember: async (memberId: string) => {
-        const { data } = await api.delete(`/team-members/${memberId}`);
+        const { data } = await api.delete(
+            `/api/team-members/${memberId}`
+        );
         return data;
     },
 };
@@ -117,7 +120,7 @@ export const teamAPI = {
 // ================= TASKS =================
 export const taskAPI = {
     getTasks: async () => {
-        const { data } = await api.get('/tasks');
+        const { data } = await api.get('/api/tasks');
         return data;
     },
 
@@ -128,17 +131,17 @@ export const taskAPI = {
         priority?: string;
         dueDate?: string;
     }) => {
-        const { data } = await api.post('/tasks', task);
+        const { data } = await api.post('/api/tasks', task);
         return data;
     },
 
     updateTask: async (id: string, updates: any) => {
-        const { data } = await api.put(`/tasks/${id}`, updates);
+        const { data } = await api.put(`/api/tasks/${id}`, updates);
         return data;
     },
 
     deleteTask: async (id: string) => {
-        const { data } = await api.delete(`/tasks/${id}`);
+        const { data } = await api.delete(`/api/tasks/${id}`);
         return data;
     },
 };
@@ -146,7 +149,7 @@ export const taskAPI = {
 // ================= EVENTS =================
 export const eventAPI = {
     getEvents: async () => {
-        const { data } = await api.get('/events');
+        const { data } = await api.get('/api/events');
         return data;
     },
 
@@ -156,17 +159,17 @@ export const eventAPI = {
         color?: string;
         description?: string;
     }) => {
-        const { data } = await api.post('/events', event);
+        const { data } = await api.post('/api/events', event);
         return data;
     },
 
     updateEvent: async (id: string, updates: any) => {
-        const { data } = await api.put(`/events/${id}`, updates);
+        const { data } = await api.put(`/api/events/${id}`, updates);
         return data;
     },
 
     deleteEvent: async (id: string) => {
-        const { data } = await api.delete(`/events/${id}`);
+        const { data } = await api.delete(`/api/events/${id}`);
         return data;
     },
 };
