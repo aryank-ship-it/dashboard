@@ -1,16 +1,19 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://dashboard-backend-1-ycf9.onrender.com/api';
+// 🔴 IMPORTANT: base URL MUST include /api
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    'https://dashboard-backend-2-pobu.onrender.com/api';
 
-// Create axios instance
 export const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
-// Add auth token to requests
+// Attach JWT token
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('auth_token');
     if (token) {
@@ -19,7 +22,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Handle auth errors
+// Handle auth expiry
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -32,10 +35,14 @@ api.interceptors.response.use(
     }
 );
 
-// Auth API
+// ================= AUTH =================
 export const authAPI = {
     register: async (email: string, password: string, fullName: string) => {
-        const { data } = await api.post('/api/auth/register', { email, password, fullName });
+        const { data } = await api.post('/auth/register', {
+            email,
+            password,
+            fullName,
+        });
         if (data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -44,7 +51,7 @@ export const authAPI = {
     },
 
     login: async (email: string, password: string) => {
-        const { data } = await api.post('/api/auth/login', { email, password });
+        const { data } = await api.post('/auth/login', { email, password });
         if (data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -63,26 +70,31 @@ export const authAPI = {
     },
 };
 
-// User API
+// ================= USERS =================
 export const userAPI = {
     getProfile: async () => {
         const { data } = await api.get('/users/me');
         return data;
     },
 
-    updateProfile: async (updates: { fullName?: string; avatarUrl?: string }) => {
+    updateProfile: async (updates: {
+        fullName?: string;
+        avatarUrl?: string;
+    }) => {
         const { data } = await api.put('/users/me', updates);
         localStorage.setItem('user', JSON.stringify(data));
         return data;
     },
 
     searchUsers: async (query: string) => {
-        const { data } = await api.get('/users/search', { params: { q: query } });
+        const { data } = await api.get('/users/search', {
+            params: { q: query },
+        });
         return data;
     },
 };
 
-// Team API
+// ================= TEAM =================
 export const teamAPI = {
     getTeamMembers: async () => {
         const { data } = await api.get('/team-members');
@@ -90,7 +102,9 @@ export const teamAPI = {
     },
 
     addTeamMember: async (userId: string) => {
-        const { data } = await api.post('/team-members', { user_id: userId });
+        const { data } = await api.post('/team-members', {
+            user_id: userId,
+        });
         return data;
     },
 
@@ -100,7 +114,7 @@ export const teamAPI = {
     },
 };
 
-// Task API
+// ================= TASKS =================
 export const taskAPI = {
     getTasks: async () => {
         const { data } = await api.get('/tasks');
@@ -129,7 +143,7 @@ export const taskAPI = {
     },
 };
 
-// Event API
+// ================= EVENTS =================
 export const eventAPI = {
     getEvents: async () => {
         const { data } = await api.get('/events');
