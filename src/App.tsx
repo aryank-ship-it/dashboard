@@ -26,7 +26,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/api/auth" element={<Auth />} />
+              <Route path="/auth" element={<Auth />} />
               <Route
                 path="/"
                 element={
