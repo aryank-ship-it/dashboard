@@ -26,7 +26,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/api/auth" element={<Auth />} />
               <Route
                 path="/"
                 element={
@@ -36,7 +36,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/tasks"
+                path="/api/tasks"
                 element={
                   <ProtectedRoute>
                     <Tasks />
@@ -44,7 +44,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/calendar"
+                path="/api/calendar"
                 element={
                   <ProtectedRoute>
                     <CalendarPage />
@@ -52,7 +52,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/analytics"
+                path="/api/analytics"
                 element={
                   <ProtectedRoute>
                     <Analytics />
@@ -60,7 +60,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/team"
+                path="/api/team"
                 element={
                   <ProtectedRoute>
                     <Team />
@@ -68,7 +68,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/settings"
+                path="/api/settings"
                 element={
                   <ProtectedRoute>
                     <Settings />

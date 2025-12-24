@@ -103,7 +103,7 @@ export const teamAPI = {
 // Task API
 export const taskAPI = {
     getTasks: async () => {
-        const { data } = await api.get('/tasks');
+        const { data } = await api.get('/api/tasks');
         return data;
     },
 
@@ -114,17 +114,17 @@ export const taskAPI = {
         priority?: string;
         dueDate?: string;
     }) => {
-        const { data } = await api.post('/tasks', task);
+        const { data } = await api.post('/api/tasks', task);
         return data;
     },
 
     updateTask: async (id: string, updates: any) => {
-        const { data } = await api.put(`/tasks/${id}`, updates);
+        const { data } = await api.put(`/api/tasks/${id}`, updates);
         return data;
     },
 
     deleteTask: async (id: string) => {
-        const { data } = await api.delete(`/tasks/${id}`);
+        const { data } = await api.delete(`/api/tasks/${id}`);
         return data;
     },
 };
